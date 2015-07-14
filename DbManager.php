@@ -6,7 +6,6 @@
  * @author Yuta Fujishiro<fujishiro@amaneku.co.jp>
  */
 
-namespace Yutaf\DbManager;
 class DbManager
 {
     protected $con;
