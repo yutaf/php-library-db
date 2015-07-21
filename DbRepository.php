@@ -11,7 +11,6 @@ abstract class DbRepository
     protected $dbManager;
     protected $table_name;
     public $columns;
-    protected $defineParse;
 
     abstract protected function setTableName();
 
@@ -27,7 +26,6 @@ abstract class DbRepository
         $this->dbManager = $dbManager;
         $this->setTableName();
         $this->setColumns();
-        $this->defineParse = new DefineParse();
     }
 
     /**
