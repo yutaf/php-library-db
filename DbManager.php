@@ -13,25 +13,31 @@ class DbManager
 
     /**
      * データベースへ接続
+     *
+     * @param array $conditions
      */
-    public function connect()
+    public function connect($conditions=array())
     {
         $options = array();
-        $dsn = 'mysql:dbname='.DATABASE_NAME.';host='.DATABASE_HOST;
-        if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
-            $dsn .= ';charset='.ENCODING_DB;
-        } else {
-            $options = array_merge($options, array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES `'.ENCODING_DB.'`',
-            ));
-        }
-        if(defined('DATABASE_UNIX_SOCKET')) {
-            $dsn .= ';unix_socket='.DATABASE_UNIX_SOCKET;
+        $dsn = 'mysql:dbname='.$conditions['dbname'].';host='.$conditions['host'];
+
+        if(isset($conditions['charset']) && strlen($conditions['charset'])>0) {
+            if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
+                $dsn .= ';charset='.$conditions['charset'];
+            } else {
+                $options = array_merge($options, array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES `'.$conditions['charset'].'`',
+                ));
+            }
         }
 
-        if(defined('MYSQL_TIMEZONE_ADJUST')) {
+        if(isset($conditions['unix_socket']) && strlen($conditions['unix_socket'])>0) {
+            $dsn .= ';unix_socket='.$conditions['unix_socket'];
+        }
+
+        if(isset($conditions['time_zone']) && strlen($conditions['time_zone'])>0) {
             $options = array_merge($options, array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = `'.MYSQL_TIMEZONE_ADJUST.'`',
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = `'.$conditions['time_zone'].'`',
                 // quit this because of causing warning
                 // Warning: PDO::__construct(): MySQL server has gone away in ....
 //                PDO::ATTR_PERSISTENT => true,
@@ -40,8 +46,8 @@ class DbManager
 
         $this->con = new PDO(
             $dsn,
-            DATABASE_USER,
-            DATABASE_PASSWORD,
+            $conditions['username'],
+            $conditions['password'],
             $options
         );
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
