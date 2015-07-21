@@ -16,27 +16,25 @@ class DbManager
      */
     public function connect()
     {
-        if(! defined('MYSQL_TIMEZONE_ADJUST')) {
-            throw new LogicException('Error: MYSQL_TIMEZONE_ADJUST is not defined.');
-        }
-
+        $options = array();
         $dsn = 'mysql:dbname='.DATABASE_NAME.';host='.DATABASE_HOST;
         if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
             $dsn .= ';charset='.ENCODING_DB;
+        } else {
+            $options = array_merge($options, array(
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES `'.ENCODING_DB.'`',
+            ));
         }
         if(defined('DATABASE_UNIX_SOCKET')) {
             $dsn .= ';unix_socket='.DATABASE_UNIX_SOCKET;
         }
 
-        $options = array(
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = `'.MYSQL_TIMEZONE_ADJUST.'`',
-            // quit this because of causing warning
-            // Warning: PDO::__construct(): MySQL server has gone away in ....
-//            PDO::ATTR_PERSISTENT => true,
-        );
-        if (version_compare(PHP_VERSION, '5.3.6') < 0) {
+        if(defined('MYSQL_TIMEZONE_ADJUST')) {
             $options = array_merge($options, array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES `'.ENCODING_DB.'`',
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = `'.MYSQL_TIMEZONE_ADJUST.'`',
+                // quit this because of causing warning
+                // Warning: PDO::__construct(): MySQL server has gone away in ....
+//                PDO::ATTR_PERSISTENT => true,
             ));
         }
 
