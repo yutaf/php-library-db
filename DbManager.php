@@ -38,11 +38,14 @@ class DbManager
         if(isset($conditions['time_zone']) && strlen($conditions['time_zone'])>0) {
             $options = array_merge($options, array(
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = `'.$conditions['time_zone'].'`',
-                // quit this because of causing warning
-                // Warning: PDO::__construct(): MySQL server has gone away in ....
-//                PDO::ATTR_PERSISTENT => true,
             ));
         }
+
+        $options = array_merge($options, array(
+            // quit this because of causing warning
+            // Warning: PDO::__construct(): MySQL server has gone away in ....
+//            PDO::ATTR_PERSISTENT => true,
+        ));
 
         $this->con = new PDO(
             $dsn,
