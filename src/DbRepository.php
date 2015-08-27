@@ -107,12 +107,12 @@ EOQ;
      * insert
      *
      * @param $values
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function insert($values)
     {
         if(! is_array($values) && count($values) === 0) {
-            throw new LogicException('invalid argument');
+            throw new \LogicException('invalid argument');
         }
         $insertData = $this->getInsertColumnsPlaceholdersParams($values);
 
@@ -131,12 +131,12 @@ EOQ;
      *
      * @param $values
      * @return array|bool
-     * @throws LogicException
+     * @throws \LogicException
      */
     protected function getInsertColumnsPlaceholdersParams($values)
     {
         if(! is_array($values) && count($values) === 0) {
-            throw new LogicException('invalid argument');
+            throw new \LogicException('invalid argument');
         }
 
         $returns = array(
@@ -148,7 +148,7 @@ EOQ;
         $tmpPlaceholders = array();
         foreach($values as $column => $value) {
             if(! in_array($column, $this->columns)) {
-                throw new LogicException('Indicated column does not exist. :'.$column);
+                throw new \LogicException('Indicated column does not exist. :'.$column);
             }
             $tmpColumns[] = $column;
             $placeholder = ':'.$column;
@@ -166,12 +166,12 @@ EOQ;
      * 一度のクエリで複数レコードの insert を行う
      *
      * @param $values_set
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function insertMultipleTimes($values_set)
     {
         if(! is_array($values_set) || count($values_set) === 0) {
-            throw new LogicException('invalid argument');
+            throw new \LogicException('invalid argument');
         }
 
         // columns, placeholders を取得
@@ -192,12 +192,12 @@ EOQ;
      *
      * @param $values_set
      * @return array
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function getMultipleInsertColumnsPlaceholdersParams($values_set)
     {
         if(! is_array($values_set) && count($values_set) === 0) {
-            throw new LogicException('invalid argument');
+            throw new \LogicException('invalid argument');
         }
 
         // initialize
@@ -219,7 +219,7 @@ EOQ;
 
             foreach($values as $column => $value) {
                 if(! in_array($column, $this->columns)) {
-                    throw new LogicException('Indicated column does not exist. :'.$column);
+                    throw new \LogicException('Indicated column does not exist. :'.$column);
                 }
 
                 if($i_values_set === 0) {
@@ -253,7 +253,7 @@ EOQ;
      * @param $values
      * @param array $wheres
      * @param array $params
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function updateById($id, $values, $wheres=array(), $params=array())
     {
@@ -261,7 +261,7 @@ EOQ;
             unset($values['id']);
         }
         if(! is_array($values) || count($values) === 0) {
-            throw new LogicException("Error: Update Columns Are Incorrect. \n".var_export($values, true));
+            throw new \LogicException("Error: Update Columns Are Incorrect. \n".var_export($values, true));
         }
         $updateData = $this->getUpdateSetsParams($values);
 
@@ -285,7 +285,7 @@ EOQ;
      *
      * @param array $ids
      * @param array $values
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function updateByIds($ids=array(), $values=array())
     {
@@ -296,7 +296,7 @@ EOQ;
             (! is_array($ids) || count($ids) === 0)
             || (! is_array($values) || count($values) === 0)
         ) {
-            throw new LogicException('invalid argument');
+            throw new \LogicException('invalid argument');
         }
 
         $updateData = $this->getUpdateSetsParams($values);
@@ -317,7 +317,7 @@ EOQ;
      * @param $values
      * @param $wheres
      * @param $params
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function update($values, $wheres, $params)
     {
@@ -326,7 +326,7 @@ EOQ;
             || ! is_array($wheres) || count($wheres)===0
             || ! is_array($params) || count($params)===0
         ) {
-            throw new LogicException('invalid argument.');
+            throw new \LogicException('invalid argument.');
         }
 
         $updateData = $this->getUpdateSetsParams($values);
@@ -348,7 +348,7 @@ EOQ;
      *
      * @param $values
      * @return array|bool
-     * @throws LogicException
+     * @throws \LogicException
      */
     protected function getUpdateSetsParams($values)
     {
@@ -360,7 +360,7 @@ EOQ;
 
         foreach($values as $column => $value) {
             if(! in_array($column, $this->columns)) {
-                throw new LogicException('Indicated column does not exist. :'.$column);
+                throw new \LogicException('Indicated column does not exist. :'.$column);
             }
             $placeholder = ':'.$column;
             $tmpSets[] = $column.'='.$placeholder;
@@ -368,7 +368,7 @@ EOQ;
         }
 
         if(count($returns['params']) === 0) {
-            throw new LogicException("Error: Update Columns Are Incorrect. \n".var_export($values, true));
+            throw new \LogicException("Error: Update Columns Are Incorrect. \n".var_export($values, true));
         }
         $returns['sets'] = implode(', ', $tmpSets);
 
@@ -379,12 +379,12 @@ EOQ;
      * 全id取得
      *
      * @return array
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchAllIds()
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
         $sql = <<<EOQ
 SELECT id FROM {$this->table_name}
@@ -431,12 +431,12 @@ EOQ;
      * 最新レコードを一件取得
      *
      * @return mixed
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchLatest()
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
         $sql = <<<EOQ
 SELECT * FROM {$this->table_name}
@@ -451,12 +451,12 @@ EOQ;
      * 最新idを一件取得
      *
      * @return bool
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchLatestId()
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
         $sql = <<<EOQ
 SELECT id FROM {$this->table_name}
@@ -475,12 +475,12 @@ EOQ;
      * 最古レコードを一件取得
      *
      * @return mixed
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchOldest()
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
         $sql = <<<EOQ
 SELECT * FROM {$this->table_name}
@@ -531,12 +531,12 @@ EOQ;
      * ランダムにidを取得
      *
      * @return bool
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchRandomId()
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
 
         $sql = <<<EOQ
@@ -558,12 +558,17 @@ EOQ;
      *
      * @param $num
      * @return array
-     * @throws LogicException
+     * @throws \LogicException
+     */
+    /**
+     * @param $num
+     * @return array
+     * @throws \LogicException
      */
     public function fetchAllRandomIds($num)
     {
         if(! in_array('id', $this->columns)) {
-            throw new LogicException('"id" column does not exist.');
+            throw new \LogicException('"id" column does not exist.');
         }
 
         $sql = <<<EOQ
@@ -605,12 +610,12 @@ EOQ;
      * id を配列で指定してレコードを削除
      *
      * @param array $ids
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function deleteByIds($ids=array())
     {
         if(! is_array($ids) || count($ids)===0) {
-            throw new LogicException('invalid argument.: '.var_export($ids, true));
+            throw new \LogicException('invalid argument.: '.var_export($ids, true));
         }
 
         $ids_implode = implode(',', $ids);
@@ -646,12 +651,12 @@ EOQ;
      *
      * @param $id
      * @return bool|int
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchSort($id)
     {
         if(! in_array('sort', $this->columns)) {
-            throw new LogicException('"sort" column does not exist.');
+            throw new \LogicException('"sort" column does not exist.');
         }
         $sql = <<<EOQ
 SELECT sort
@@ -694,12 +699,12 @@ EOQ;
      * テーブルのソート順をランダムに入れ替える
      *
      * @param null $cnt
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function makeSortRandom($cnt=null)
     {
         if(! in_array('sort', $this->columns)) {
-            throw new LogicException('"sort" column does not exist.');
+            throw new \LogicException('"sort" column does not exist.');
         }
         if(is_null($cnt)) {
             $cnt = $this->fetchCnt();
@@ -720,12 +725,12 @@ EOQ;
      *
      * @param $id1
      * @param $id2
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function replaceSort($id1, $id2)
     {
         if(! in_array('sort', $this->columns)) {
-            throw new LogicException('"sort" column does not exist.');
+            throw new \LogicException('"sort" column does not exist.');
         }
         $row1 = $this->fetchById($id1);
         $row2 = $this->fetchById($id2);
@@ -745,12 +750,12 @@ EOQ;
      * @param string $where
      * @param array $params
      * @param string $join
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function sortWithNearby($id, $up=true, $where='', $params=array(), $join='')
     {
         if(! in_array('sort', $this->columns)) {
-            throw new LogicException('"sort" column does not exist.');
+            throw new \LogicException('"sort" column does not exist.');
         }
         if(! $row = $this->fetchById($id)) {
             return;
@@ -779,12 +784,12 @@ EOQ;
      * @param array $params_additional
      * @param string $join
      * @return mixed
-     * @throws LogicException
+     * @throws \LogicException
      */
     protected function fetchRowNearby($id, $up=true, $where_additional='', $params_additional=array(), $join='')
     {
         if(! in_array('sort', $this->columns)) {
-            throw new LogicException('"sort" column does not exist.');
+            throw new \LogicException('"sort" column does not exist.');
         }
         if($up) {
             $operator = '>';
@@ -834,12 +839,12 @@ EOQ;
      *
      * @param $id
      * @return bool
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function fetchTitle($id)
     {
         if(! in_array('title', $this->columns)) {
-            throw new LogicException('"title" column does not exist.');
+            throw new \LogicException('"title" column does not exist.');
         }
 
         $sql = <<<EOQ
