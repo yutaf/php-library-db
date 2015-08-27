@@ -2,9 +2,9 @@
 
 /**
  * Class DbRepository
- *
- * @author Yuta Fujishiro<fujishiro@amaneku.co.jp>
  */
+namespace Yutaf;
+
 abstract class DbRepository
 {
     protected $con;
