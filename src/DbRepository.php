@@ -17,10 +17,10 @@ abstract class DbRepository
     /**
      * コンストラクタ
      *
-     * @param PDO $con
+     * @param \PDO $con
      * @param DbManager $dbManager
      */
-    public function __construct(PDO $con, DbManager $dbManager)
+    public function __construct(\PDO $con, DbManager $dbManager)
     {
         $this->setConnection($con);
         $this->dbManager = $dbManager;
@@ -31,7 +31,7 @@ abstract class DbRepository
     /**
      * コネクションを設定
      *
-     * @param PDO $con
+     * @param \PDO $con
      */
     public function setConnection($con)
     {
@@ -57,7 +57,7 @@ abstract class DbRepository
 DESCRIBE {$this->table_name}
 ;
 EOQ;
-        return $this->fetchAll($sql, array(), PDO::FETCH_COLUMN, 0);
+        return $this->fetchAll($sql, array(), \PDO::FETCH_COLUMN, 0);
     }
 
     /**
@@ -65,7 +65,7 @@ EOQ;
      *
      * @param $sql
      * @param array $params
-     * @return PDOStatement $stmt
+     * @return \PDOStatement $stmt
      */
     public function execute($sql, $params=array())
     {
@@ -83,7 +83,7 @@ EOQ;
      * @param $fetch_style
      * @return mixed
      */
-    public function fetch($sql, $params=array(), $fetch_style=PDO::FETCH_ASSOC)
+    public function fetch($sql, $params=array(), $fetch_style=\PDO::FETCH_ASSOC)
     {
         return $this->execute($sql, $params)->fetch($fetch_style);
     }
@@ -97,10 +97,10 @@ EOQ;
      * @param int $fetch_argument
      * @return array
      */
-    public function fetchAll($sql=null, $params=array(), $fetch_style=PDO::FETCH_ASSOC, $fetch_argument=0)
+    public function fetchAll($sql=null, $params=array(), $fetch_style=\PDO::FETCH_ASSOC, $fetch_argument=0)
     {
         if(empty($sql)) $sql = 'SELECT * FROM '.$this->table_name;
-        return ($fetch_style == PDO::FETCH_COLUMN)? $this->execute($sql, $params)->fetchAll($fetch_style, $fetch_argument) : $this->execute($sql, $params)->fetchAll($fetch_style);
+        return ($fetch_style == \PDO::FETCH_COLUMN)? $this->execute($sql, $params)->fetchAll($fetch_style, $fetch_argument) : $this->execute($sql, $params)->fetchAll($fetch_style);
     }
 
     /**
@@ -390,7 +390,7 @@ EOQ;
 SELECT id FROM {$this->table_name}
 ;
 EOQ;
-        return $this->fetchAll($sql, array(), PDO::FETCH_COLUMN);
+        return $this->fetchAll($sql, array(), \PDO::FETCH_COLUMN);
     }
 
     /**
@@ -407,7 +407,7 @@ SELECT COUNT(id) FROM {$this->table_name}
 {$where}
 ;
 EOQ;
-        $result = $this->fetch($sql, $params, PDO::FETCH_NUM);
+        $result = $this->fetch($sql, $params, \PDO::FETCH_NUM);
         return $result[0];
     }
 
@@ -464,7 +464,7 @@ ORDER BY id DESC
 LIMIT 1
 ;
 EOQ;
-        $result = $this->fetch($sql, array(), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(), \PDO::FETCH_NUM);
         if(! $result) {
             return false;
         }
@@ -502,7 +502,7 @@ EOQ;
 SELECT created FROM {$this->table_name} ORDER BY created ASC LIMIT 1
 ;
 EOQ;
-        $result = $this->fetch($sql, array(), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(), \PDO::FETCH_NUM);
         if(! $result) {
             return false;
         }
@@ -520,7 +520,7 @@ EOQ;
 SELECT created FROM {$this->table_name} ORDER BY created DESC LIMIT 1
 ;
 EOQ;
-        $result = $this->fetch($sql, array(), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(), \PDO::FETCH_NUM);
         if(! $result) {
             return false;
         }
@@ -545,7 +545,7 @@ ORDER BY RAND()
 LIMIT 1
 ;
 EOQ;
-        $result = $this->fetch($sql, array(), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(), \PDO::FETCH_NUM);
         if(! $result) {
             return false;
         }
@@ -572,7 +572,7 @@ ORDER BY RAND()
 LIMIT {$num}
 ;
 EOQ;
-        return $this->fetchAll($sql, array(), PDO::FETCH_COLUMN);
+        return $this->fetchAll($sql, array(), \PDO::FETCH_COLUMN);
     }
 
     /**
@@ -659,7 +659,7 @@ FROM {$this->table_name}
 WHERE id=:id
 ;
 EOQ;
-        $result = $this->fetch($sql, array(':id'=>$id), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(':id'=>$id), \PDO::FETCH_NUM);
         if(! $result) return false;
         return (int)$result[0];
     }
@@ -686,7 +686,7 @@ EOQ;
             ':value' => $value
         );
 
-        $result = $this->fetch($sql, $params, PDO::FETCH_NUM);
+        $result = $this->fetch($sql, $params, \PDO::FETCH_NUM);
         return (int)$result[0];
     }
 
@@ -845,7 +845,7 @@ EOQ;
         $sql = <<<EOQ
 SELECT title FROM {$this->table_name} WHERE id=:id;
 EOQ;
-        $result = $this->fetch($sql, array(':id'=>$id), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(':id'=>$id), \PDO::FETCH_NUM);
         if(! $result) return false;
         return $result[0];
     }
@@ -862,7 +862,7 @@ EOQ;
         $sql = <<<EOQ
 SELECT COUNT(id) FROM {$this->table_name} WHERE {$column} = :column;
 EOQ;
-        $result = $this->fetch($sql, array(':column' => $value), PDO::FETCH_NUM);
+        $result = $this->fetch($sql, array(':column' => $value), \PDO::FETCH_NUM);
         return (int)$result[0];
     }
 
