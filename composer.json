@@ -6,6 +6,8 @@
       "php": ">=5.3.0"
     },
     "autoload": {
-      "classmap": ["."]
+        "psr-4": {
+            "Yutaf\\": "src/"
+        }
     }
 }
