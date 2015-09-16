@@ -168,7 +168,7 @@ EOQ;
      * @param $values_set
      * @throws \LogicException
      */
-    public function insertMultipleTimes($values_set)
+    public function insertMultipleRows($values_set)
     {
         if(! is_array($values_set) || count($values_set) === 0) {
             throw new \LogicException('invalid argument');
@@ -188,7 +188,7 @@ EOQ;
     }
 
     /**
-     * insertMultipleTimes メソッドで使用するsqlのパーツを取得
+     * insertMultipleRows メソッドで使用するsqlのパーツを取得
      *
      * @param $values_set
      * @return array
