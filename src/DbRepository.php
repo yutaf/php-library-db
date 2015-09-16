@@ -528,6 +528,101 @@ EOQ;
     }
 
     /**
+     * 条件を指定して id を取得
+     *
+     * @param array $conditions
+     * @return bool
+     */
+    public function fetchIdByConditions($conditions=array())
+    {
+        if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return false;
+        }
+        $condition_sets = $this->fetchConditionSetsByConditions($conditions);
+        if(! $condition_sets) {
+            return false;
+        }
+
+        $sql = <<<EOL
+SELECT id FROM {$this->table_name} {$condition_sets['where']}
+;
+EOL;
+        $result = $this->fetch($sql, $condition_sets['params'], \PDO::FETCH_NUM);
+        if(! $result) {
+            return false;
+        }
+        return $result[0];
+    }
+
+    /**
+     * 条件を指定して全ての id を取得
+     *
+     * @param array $conditions
+     * @return array|bool
+     */
+    public function fetchAllIdsByConditions($conditions=array())
+    {
+        if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return false;
+        }
+        $condition_sets = $this->fetchConditionSetsByConditions($conditions);
+        if(! $condition_sets) {
+            return false;
+        }
+
+        $sql = <<<EOL
+SELECT id FROM {$this->table_name} {$condition_sets['where']}
+;
+EOL;
+        return $this->fetchAll($sql, $condition_sets['params'], \PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * fetchConditionSetsByConditions
+     *
+     * @param array $conditions
+     * @return array|bool
+     */
+    private function fetchConditionSetsByConditions($conditions=array())
+    {
+        if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return false;
+        }
+
+        $wheres = array();
+        $params = array();
+        if(isset($conditions['wheres']) && is_array($conditions['wheres'])>0 && count($conditions['wheres'])>0) {
+            foreach($conditions['wheres'] as $k => $v) {
+                if(is_array($v) && count($v)>0) {
+                    $suffix = 0;
+                    $placeholders = array();
+                    foreach($v as $vv) {
+                        $placeholders[] = ":{$k}{$suffix}";
+                        $params[":{$k}{$suffix}"] = $vv;
+                        $suffix++;
+                    }
+                    $implode_placeholders = implode(',', $placeholders);
+
+                    $wheres[] = "{$k} IN({$implode_placeholders})";
+                } else {
+                    $wheres[] = "{$k}=:{$k}";
+                    $params[":{$k}"] = $v;
+                }
+            }
+        }
+
+        $where = '';
+        if(count($wheres)>0) {
+            $where = 'WHERE '.implode(' AND ', $wheres);
+        }
+
+        return array(
+            'where' => $where,
+            'params' => $params,
+        );
+    }
+
+    /**
      * ランダムにidを取得
      *
      * @return bool
