@@ -566,6 +566,28 @@ EOQ;
     }
 
     /**
+     * 条件を指定して全てのレコードを取得
+     *
+     * @param array $conditions
+     * @return array
+     */
+    public function fetchAllByConditions($conditions=array())
+    {
+        if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return array();
+        }
+        $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
+        if(! $sql_and_params) {
+            return array();
+        }
+        $fetch_style = \PDO::FETCH_ASSOC;
+        if(isset($conditions['fetch_style']) && strlen($conditions['fetch_style'])>0) {
+            $fetch_style = $conditions['fetch_style'];
+        }
+        return $this->fetchAll($sql_and_params['sql'], $sql_and_params['params'], $fetch_style);
+    }
+
+    /**
      * getSqlAndParamsByConditions
      *
      * @param array $conditions
