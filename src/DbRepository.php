@@ -580,9 +580,10 @@ EOQ;
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
             return false;
         }
-        if(! isset($conditions['column']) || strlen($conditions['column'])===0) {
+        if(! isset($conditions['columns']) || ! is_array($conditions['columns']) || count($conditions['columns'])===0) {
             return false;
         }
+        $columns_implode = implode(',', $conditions['columns']);
 
         $wheres = array();
         $params = array();
@@ -640,8 +641,9 @@ EOQ;
             }
         }
 
+        //TODO
         $sql = <<<EOL
-SELECT {$conditions['column']} FROM {$this->table_name} {$where} {$limit}
+SELECT {$columns_implode} FROM {$this->table_name} {$where} {$limit}
 ;
 EOL;
         return array(
