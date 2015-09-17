@@ -543,11 +543,7 @@ EOQ;
         if(! $sql_and_params) {
             return false;
         }
-        $result = $this->fetch($sql_and_params['sql'], $sql_and_params['params'], \PDO::FETCH_NUM);
-        if(! $result) {
-            return false;
-        }
-        return $result[0];
+        return $this->fetch($sql_and_params['sql'], $sql_and_params['params'], \PDO::FETCH_COLUMN);
     }
 
     /**
