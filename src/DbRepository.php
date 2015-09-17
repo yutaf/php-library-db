@@ -588,7 +588,7 @@ EOQ;
     }
 
     /**
-     * getSqlAndParamsByConditions
+     * 条件を指定して sql と params を取得
      *
      * @param array $conditions
      * @return array|bool
