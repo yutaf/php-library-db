@@ -641,7 +641,6 @@ EOQ;
             }
         }
 
-        //TODO
         $sql = <<<EOL
 SELECT {$columns_implode} FROM {$this->table_name} {$where} {$limit}
 ;
