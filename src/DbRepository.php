@@ -648,6 +648,58 @@ EOQ;
             $where = 'WHERE '.implode(' AND ', $wheres);
         }
 
+        //
+        // join
+        //
+
+        // sample
+        /*
+        $conditions_fetching_pre_installed_tape = array(
+            'joins' => array(
+                array(
+                    'table' => 'tape',
+                    'ons' => array(
+                        'copy_tape.tape_id' => 'tape.id',
+                        'tape.is_preinstalled' => IS_PREINSTALLED_TAPE_TRUE,
+                    ),
+                ),
+            ),
+        );
+        */
+        $joins_implode = '';
+        if(isset($conditions['joins']) && is_array($conditions['joins']) && count($conditions['joins'])>0) {
+            $joins = array();
+            foreach($conditions['joins'] as $join) {
+                $join_pieces = array();
+                if($join['is_inner_join']) {
+                    $join_pieces[] = 'INNER JOIN';
+                } else {
+                    $join_pieces[] = 'LEFT JOIN';
+                }
+                $join_pieces[] = $join['table'];
+
+                $ons = array();
+                foreach($join['ons'] as $k => $v) {
+                    if(is_array($v) && count($v)>0) {
+                        $in_values = array();
+                        foreach($v as $vv) {
+                            $in_values[] = $vv;
+                        }
+                        $implode_in_values = implode(',', $in_values);
+                        $ons[] = "{$k} IN({$implode_in_values})";
+                    } else {
+                        $ons[] = "{$k}={$v}";
+                    }
+                }
+                $ons_implode = implode(' AND ', $ons);
+                $on = "ON {$ons_implode}";
+
+                $join_pieces[] = $on;
+                $joins[] = implode(' ', $join_pieces);
+            }
+            $joins_implode = implode(' ', $joins);
+        }
+
         $limit = '';
         if(isset($conditions['limit']) && is_numeric($conditions['limit'])) {
             $offset = '';
@@ -664,7 +716,7 @@ EOQ;
         }
 
         $sql = <<<EOL
-SELECT {$columns_implode} FROM {$this->table_name} {$where} {$group_by} {$limit}
+SELECT {$columns_implode} FROM {$this->table_name} {$joins_implode} {$where} {$group_by} {$limit}
 ;
 EOL;
         return array(
