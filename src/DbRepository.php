@@ -538,7 +538,7 @@ EOQ;
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
             return false;
         }
-        $conditions['columns'] = array('id');
+        $conditions['columns'] = array("{$this->table_name}.id");
         $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
         if(! $sql_and_params) {
             return false;
@@ -557,7 +557,7 @@ EOQ;
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
             return array();
         }
-        $conditions['columns'] = array('id');
+        $conditions['columns'] = array("{$this->table_name}.id");
         $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
         if(! $sql_and_params) {
             return array();
