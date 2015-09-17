@@ -637,8 +637,13 @@ EOQ;
             }
         }
 
+        $group_by = '';
+        if(isset($conditions['group_by']) && strlen($conditions['group_by'])>0) {
+            $group_by = "GROUP BY {$conditions['group_by']}";
+        }
+
         $sql = <<<EOL
-SELECT {$columns_implode} FROM {$this->table_name} {$where} {$limit}
+SELECT {$columns_implode} FROM {$this->table_name} {$where} {$group_by} {$limit}
 ;
 EOL;
         return array(
