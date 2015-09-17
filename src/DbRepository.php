@@ -559,12 +559,12 @@ EOQ;
     public function fetchAllIdsByConditions($conditions=array())
     {
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
-            return false;
+            return array();
         }
         $conditions['column'] = 'id';
         $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
         if(! $sql_and_params) {
-            return false;
+            return array();
         }
         return $this->fetchAll($sql_and_params['sql'], $sql_and_params['params'], \PDO::FETCH_COLUMN);
     }
