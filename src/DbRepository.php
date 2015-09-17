@@ -538,16 +538,12 @@ EOQ;
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
             return false;
         }
-        $condition_sets = $this->fetchConditionSetsByConditions($conditions);
-        if(! $condition_sets) {
+        $conditions['column'] = 'id';
+        $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
+        if(! $sql_and_params) {
             return false;
         }
-
-        $sql = <<<EOL
-SELECT id FROM {$this->table_name} {$condition_sets['where']}
-;
-EOL;
-        $result = $this->fetch($sql, $condition_sets['params'], \PDO::FETCH_NUM);
+        $result = $this->fetch($sql_and_params['sql'], $sql_and_params['params'], \PDO::FETCH_NUM);
         if(! $result) {
             return false;
         }
@@ -565,27 +561,26 @@ EOL;
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
             return false;
         }
-        $condition_sets = $this->fetchConditionSetsByConditions($conditions);
-        if(! $condition_sets) {
+        $conditions['column'] = 'id';
+        $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
+        if(! $sql_and_params) {
             return false;
         }
-
-        $sql = <<<EOL
-SELECT id FROM {$this->table_name} {$condition_sets['where']}
-;
-EOL;
-        return $this->fetchAll($sql, $condition_sets['params'], \PDO::FETCH_COLUMN);
+        return $this->fetchAll($sql_and_params['sql'], $sql_and_params['params'], \PDO::FETCH_COLUMN);
     }
 
     /**
-     * fetchConditionSetsByConditions
+     * getSqlAndParamsByConditions
      *
      * @param array $conditions
      * @return array|bool
      */
-    private function fetchConditionSetsByConditions($conditions=array())
+    private function getSqlAndParamsByConditions($conditions=array())
     {
         if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return false;
+        }
+        if(! isset($conditions['column']) || strlen($conditions['column'])===0) {
             return false;
         }
 
@@ -610,14 +605,47 @@ EOL;
                 }
             }
         }
+        if(isset($conditions['wheres_not']) && is_array($conditions['wheres_not'])>0 && count($conditions['wheres_not'])>0) {
+            foreach($conditions['wheres_not'] as $k => $v) {
+                if(is_array($v) && count($v)>0) {
+                    $suffix = 0;
+                    $placeholders = array();
+                    foreach($v as $vv) {
+                        $placeholders[] = ":{$k}{$suffix}";
+                        $params[":{$k}{$suffix}"] = $vv;
+                        $suffix++;
+                    }
+                    $implode_placeholders = implode(',', $placeholders);
+
+                    $wheres[] = "{$k} NOT IN({$implode_placeholders})";
+                } else {
+                    $wheres[] = "{$k}!=:{$k}";
+                    $params[":{$k}"] = $v;
+                }
+            }
+        }
 
         $where = '';
         if(count($wheres)>0) {
             $where = 'WHERE '.implode(' AND ', $wheres);
         }
 
+        $limit = '';
+        if(isset($conditions['limit']) && is_numeric($conditions['limit'])) {
+            $offset = '';
+            if(isset($conditions['offset']) && is_numeric($conditions['offset'])) {
+                $limit = "LIMIT {$conditions['offset']}, {$conditions['limit']}";
+            } else {
+                $limit = "LIMIT {$conditions['limit']}";
+            }
+        }
+
+        $sql = <<<EOL
+SELECT {$conditions['column']} FROM {$this->table_name} {$where} {$limit}
+;
+EOL;
         return array(
-            'where' => $where,
+            'sql' => $sql,
             'params' => $params,
         );
     }
