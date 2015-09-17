@@ -605,10 +605,10 @@ EOQ;
 
         $wheres = array();
         $params = array();
+        $suffix = 0;
         if(isset($conditions['wheres']) && is_array($conditions['wheres'])>0 && count($conditions['wheres'])>0) {
             foreach($conditions['wheres'] as $k => $v) {
                 if(is_array($v) && count($v)>0) {
-                    $suffix = 0;
                     $placeholders = array();
                     foreach($v as $vv) {
                         $placeholders[] = ":{$k}{$suffix}";
@@ -627,7 +627,6 @@ EOQ;
         if(isset($conditions['wheres_not']) && is_array($conditions['wheres_not'])>0 && count($conditions['wheres_not'])>0) {
             foreach($conditions['wheres_not'] as $k => $v) {
                 if(is_array($v) && count($v)>0) {
-                    $suffix = 0;
                     $placeholders = array();
                     foreach($v as $vv) {
                         $placeholders[] = ":{$k}{$suffix}";
