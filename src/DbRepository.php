@@ -665,6 +665,7 @@ EOQ;
                 ),
             ),
         );
+        $copy_tape_id = $dbManager->get('CopyTape')->fetchIdByConditions($conditions_fetching_pre_installed_tape);
         */
         $joins_implode = '';
         if(isset($conditions['joins']) && is_array($conditions['joins']) && count($conditions['joins'])>0) {
