@@ -621,7 +621,7 @@ EOQ;
             return false;
         }
         if(! isset($conditions['columns']) || ! is_array($conditions['columns']) || count($conditions['columns'])===0) {
-            return false;
+            $conditions['columns'] = array("{$this->table_name}.*");
         }
         $columns_implode = implode(',', $conditions['columns']);
 
