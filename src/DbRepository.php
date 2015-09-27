@@ -566,6 +566,28 @@ EOQ;
     }
 
     /**
+     * Fetching a record by conditions
+     *
+     * @param array $conditions
+     * @return bool|mixed
+     */
+    public function fetchByConditions($conditions=array())
+    {
+        if(! isset($conditions) || ! is_array($conditions) || count($conditions)===0) {
+            return false;
+        }
+        $sql_and_params = $this->getSqlAndParamsByConditions($conditions);
+        if(! $sql_and_params) {
+            return false;
+        }
+        $fetch_style = \PDO::FETCH_ASSOC;
+        if(isset($conditions['fetch_style']) && strlen($conditions['fetch_style'])>0) {
+            $fetch_style = $conditions['fetch_style'];
+        }
+        return $this->fetch($sql_and_params['sql'], $sql_and_params['params'], $fetch_style);
+    }
+
+    /**
      * 条件を指定して全てのレコードを取得
      *
      * @param array $conditions
