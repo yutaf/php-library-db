@@ -630,37 +630,37 @@ EOQ;
         $suffix = 0;
         if(isset($conditions['wheres']) && is_array($conditions['wheres'])>0 && count($conditions['wheres'])>0) {
             foreach($conditions['wheres'] as $k => $v) {
+                $k_escaped = str_replace('.', 'DOT', $k);
                 if(is_array($v) && count($v)>0) {
                     $placeholders = array();
                     foreach($v as $vv) {
-                        $placeholders[] = ":{$k}{$suffix}";
-                        $params[":{$k}{$suffix}"] = $vv;
+                        $placeholders[] = ":{$k_escaped}{$suffix}";
+                        $params[":{$k_escaped}{$suffix}"] = $vv;
                         $suffix++;
                     }
                     $implode_placeholders = implode(',', $placeholders);
-
                     $wheres[] = "{$k} IN({$implode_placeholders})";
                 } else {
-                    $wheres[] = "{$k}=:{$k}";
-                    $params[":{$k}"] = $v;
+                    $wheres[] = "{$k}=:{$k_escaped}";
+                    $params[":{$k_escaped}"] = $v;
                 }
             }
         }
         if(isset($conditions['wheres_not']) && is_array($conditions['wheres_not'])>0 && count($conditions['wheres_not'])>0) {
             foreach($conditions['wheres_not'] as $k => $v) {
+                $k_escaped = str_replace('.', 'DOT', $k);
                 if(is_array($v) && count($v)>0) {
                     $placeholders = array();
                     foreach($v as $vv) {
-                        $placeholders[] = ":{$k}{$suffix}";
-                        $params[":{$k}{$suffix}"] = $vv;
+                        $placeholders[] = ":{$k_escaped}{$suffix}";
+                        $params[":{$k_escaped}{$suffix}"] = $vv;
                         $suffix++;
                     }
                     $implode_placeholders = implode(',', $placeholders);
-
                     $wheres[] = "{$k} NOT IN({$implode_placeholders})";
                 } else {
-                    $wheres[] = "{$k}!=:{$k}";
-                    $params[":{$k}"] = $v;
+                    $wheres[] = "{$k}!=:{$k_escaped}";
+                    $params[":{$k_escaped}"] = $v;
                 }
             }
         }
