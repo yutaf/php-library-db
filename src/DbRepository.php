@@ -886,6 +886,23 @@ EOQ;
     }
 
     /**
+     * Delete records with conditions
+     *
+     * @param array $conditions
+     */
+    public function deleteByConditions($conditions=array())
+    {
+        $where_and_params = $this->getWhereAndParams($conditions);
+        $where = $where_and_params['where'];
+        $params = $where_and_params['params'];
+        $sql = <<<EOL
+DELETE FROM {$this->table_name} {$where}
+;
+EOL;
+        $this->execute($sql, $params);
+    }
+
+    /**
      * sortを取得
      *
      * @param $id
