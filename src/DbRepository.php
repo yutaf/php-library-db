@@ -625,50 +625,9 @@ EOQ;
         }
         $columns_implode = implode(',', $conditions['columns']);
 
-        $wheres = array();
-        $params = array();
-        $suffix = 0;
-        if(isset($conditions['wheres']) && is_array($conditions['wheres'])>0 && count($conditions['wheres'])>0) {
-            foreach($conditions['wheres'] as $k => $v) {
-                $k_escaped = str_replace('.', 'DOT', $k);
-                if(is_array($v) && count($v)>0) {
-                    $placeholders = array();
-                    foreach($v as $vv) {
-                        $placeholders[] = ":{$k_escaped}{$suffix}";
-                        $params[":{$k_escaped}{$suffix}"] = $vv;
-                        $suffix++;
-                    }
-                    $implode_placeholders = implode(',', $placeholders);
-                    $wheres[] = "{$k} IN({$implode_placeholders})";
-                } else {
-                    $wheres[] = "{$k}=:{$k_escaped}";
-                    $params[":{$k_escaped}"] = $v;
-                }
-            }
-        }
-        if(isset($conditions['wheres_not']) && is_array($conditions['wheres_not'])>0 && count($conditions['wheres_not'])>0) {
-            foreach($conditions['wheres_not'] as $k => $v) {
-                $k_escaped = str_replace('.', 'DOT', $k);
-                if(is_array($v) && count($v)>0) {
-                    $placeholders = array();
-                    foreach($v as $vv) {
-                        $placeholders[] = ":{$k_escaped}{$suffix}";
-                        $params[":{$k_escaped}{$suffix}"] = $vv;
-                        $suffix++;
-                    }
-                    $implode_placeholders = implode(',', $placeholders);
-                    $wheres[] = "{$k} NOT IN({$implode_placeholders})";
-                } else {
-                    $wheres[] = "{$k}!=:{$k_escaped}";
-                    $params[":{$k_escaped}"] = $v;
-                }
-            }
-        }
-
-        $where = '';
-        if(count($wheres)>0) {
-            $where = 'WHERE '.implode(' AND ', $wheres);
-        }
+        $where_and_params = $this->getWhereAndParams($conditions);
+        $where = $where_and_params['where'];
+        $params = $where_and_params['params'];
 
         //
         // join
@@ -744,6 +703,65 @@ SELECT {$columns_implode} FROM {$this->table_name} {$joins_implode} {$where} {$g
 EOL;
         return array(
             'sql' => $sql,
+            'params' => $params,
+        );
+    }
+
+    /**
+     * get where and params for sql
+     *
+     * @param array $conditions
+     * @return array
+     */
+    private function getWhereAndParams($conditions=array())
+    {
+        $wheres = array();
+        $params = array();
+        $suffix = 0;
+        if(isset($conditions['wheres']) && is_array($conditions['wheres'])>0 && count($conditions['wheres'])>0) {
+            foreach($conditions['wheres'] as $k => $v) {
+                $k_escaped = str_replace('.', 'DOT', $k);
+                if(is_array($v) && count($v)>0) {
+                    $placeholders = array();
+                    foreach($v as $vv) {
+                        $placeholders[] = ":{$k_escaped}{$suffix}";
+                        $params[":{$k_escaped}{$suffix}"] = $vv;
+                        $suffix++;
+                    }
+                    $implode_placeholders = implode(',', $placeholders);
+                    $wheres[] = "{$k} IN({$implode_placeholders})";
+                } else {
+                    $wheres[] = "{$k}=:{$k_escaped}";
+                    $params[":{$k_escaped}"] = $v;
+                }
+            }
+        }
+        if(isset($conditions['wheres_not']) && is_array($conditions['wheres_not'])>0 && count($conditions['wheres_not'])>0) {
+            foreach($conditions['wheres_not'] as $k => $v) {
+                $k_escaped = str_replace('.', 'DOT', $k);
+                if(is_array($v) && count($v)>0) {
+                    $placeholders = array();
+                    foreach($v as $vv) {
+                        $placeholders[] = ":{$k_escaped}{$suffix}";
+                        $params[":{$k_escaped}{$suffix}"] = $vv;
+                        $suffix++;
+                    }
+                    $implode_placeholders = implode(',', $placeholders);
+                    $wheres[] = "{$k} NOT IN({$implode_placeholders})";
+                } else {
+                    $wheres[] = "{$k}!=:{$k_escaped}";
+                    $params[":{$k_escaped}"] = $v;
+                }
+            }
+        }
+
+        $where = '';
+        if(count($wheres)>0) {
+            $where = 'WHERE '.implode(' AND ', $wheres);
+        }
+
+        return array(
+            'where' => $where,
             'params' => $params,
         );
     }
