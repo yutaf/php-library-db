@@ -851,11 +851,11 @@ EOQ;
     }
 
     /**
-     * レコードを１件削除する
+     * id を指定してレコードを１件削除する
      *
      * @param $id
      */
-    public function delete($id)
+    public function deleteById($id)
     {
         if(! $this->fetchById($id)) return;
         $sql = <<<EOQ
