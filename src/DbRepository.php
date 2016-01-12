@@ -895,6 +895,9 @@ EOQ;
         $where_and_params = $this->getWhereAndParams($conditions);
         $where = $where_and_params['where'];
         $params = $where_and_params['params'];
+        if(! isset($where) || strlen($where) === 0) {
+            throw new \LogicException(__METHOD__.";  Invalid delete conditions.\n".var_export($conditions, true));
+        }
         $sql = <<<EOL
 DELETE FROM {$this->table_name} {$where}
 ;
