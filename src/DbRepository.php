@@ -696,9 +696,14 @@ EOQ;
         if(isset($conditions['group_by']) && strlen($conditions['group_by'])>0) {
             $group_by = "GROUP BY {$conditions['group_by']}";
         }
+        
+        $order_by = '';
+        if(isset($conditions['order_by']) && strlen($conditions['order_by'])>0) {
+            $order_by = "ORDER BY {$conditions['order_by']}";
+        }
 
         $sql = <<<EOL
-SELECT {$columns_implode} FROM {$this->table_name} {$joins_implode} {$where} {$group_by} {$limit}
+SELECT {$columns_implode} FROM {$this->table_name} {$joins_implode} {$where} {$group_by} {$order_by} {$limit}
 ;
 EOL;
         return array(
