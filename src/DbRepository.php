@@ -107,7 +107,7 @@ EOQ;
      * insert
      *
      * @param $values
-     * @throws \LogicException
+     * @return \PDOStatement
      */
     public function insert($values)
     {
