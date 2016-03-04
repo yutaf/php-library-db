@@ -123,7 +123,7 @@ VALUES({$insertData['placeholders']})
 ;
 EOQ;
 
-        $this->execute($sql, $insertData['params']);
+        return $this->execute($sql, $insertData['params']);
     }
 
     /**
